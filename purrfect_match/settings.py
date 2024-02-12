@@ -14,6 +14,12 @@ from pathlib import Path
 from datetime import timedelta
 import os
 
+import environ  
+import dj_database_url
+import django_heroku
+
+
+
 
 load_dotenv()
 
@@ -32,7 +38,30 @@ SECRET_KEY = 'django-insecure-_kc_@%65hm43bs%h3o)@pj3l7$rx81q7(-hs2jef6pc10do7#b
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['localhost', '127.0.0.1']
+ALLOWED_HOSTS = ['localhost', '127.0.0.1', '.herokuapp.com']
+
+# Initialise environment variables
+env = environ.Env()
+environ.Env.read_env()
+
+# catcollector/settings.py
+
+# These are required
+DATABASE_URL=env('DATABASE_URL')
+SECRET_KEY=env('SECRET_KEY')
+
+# These are not required.
+# If you want to connect locally to the database you may need them
+# Something to be aware of, nothing more.
+
+# PGDATABASE=env('PGDATABASE')
+# PGHOST=env('PGHOST')
+# PGPASSWORD=env('PGPASSWORD')
+# PGPORT=env('PGPORT')
+# PGUSER=env('PGUSER')
+
+
+
 
 CORS_ALLOWED_ORIGINS = ['http://localhost:3000',]
 
@@ -54,6 +83,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    "whitenoise.middleware.WhiteNoiseMiddleware",
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -87,16 +117,24 @@ WSGI_APPLICATION = 'purrfect_match.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'purrfect_match',
-        'HOST': 'localhost',
-        'USER': 'purr_admin',
-        'PASSWORD': 'purrfect',
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.postgresql',
+#         'NAME': 'purrfect_match',
+#         'HOST': 'localhost',
+#         'USER': 'purr_admin',
+#         'PASSWORD': 'purrfect',
 
-    }
+#     }
+# }
+
+
+
+DATABASES = {
+    'default': 
+        dj_database_url.config('DATABASE_URL')
 }
+
 
 
 # Password validation
@@ -165,3 +203,5 @@ SIMPLE_JWT = {
     'AUTH_TOKEN_CLASSES': ('rest_framework_simplejwt.tokens.AccessToken',),
     'TOKEN_TYPE_CLAIM': 'token_type',
 }
+
+django_heroku.settings(locals())
