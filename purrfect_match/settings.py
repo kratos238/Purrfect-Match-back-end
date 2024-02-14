@@ -54,11 +54,11 @@ SECRET_KEY=env('SECRET_KEY')
 # If you want to connect locally to the database you may need them
 # Something to be aware of, nothing more.
 
-# PGDATABASE=env('PGDATABASE')
-# PGHOST=env('PGHOST')
-# PGPASSWORD=env('PGPASSWORD')
-# PGPORT=env('PGPORT')
-# PGUSER=env('PGUSER')
+PGDATABASE=env('PGDATABASE')
+PGHOST=env('PGHOST')
+PGPASSWORD=env('PGPASSWORD')
+PGPORT=env('PGPORT')
+PGUSER=env('PGUSER')
 
 
 
@@ -130,11 +130,21 @@ WSGI_APPLICATION = 'purrfect_match.wsgi.application'
 
 
 
-DATABASES = {
-    'default': 
-        dj_database_url.config('DATABASE_URL')
-}
+# DATABASES = {
+#     'default': 
+#         dj_database_url.config('DATABASE_URL')
+# }
 
+DATABASES = {
+     'default': {
+         'ENGINE': 'django.db.backends.postgresql',
+         'NAME': PGDATABASE,
+         'USER': PGUSER,
+         'PASSWORD': PGPASSWORD,
+         'HOST': PGHOST,
+         'PORT': PGPORT,
+     }
+ }
 
 
 # Password validation
