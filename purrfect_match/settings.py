@@ -63,7 +63,7 @@ SECRET_KEY=env('SECRET_KEY')
 
 
 
-CORS_ALLOWED_ORIGINS = ['http://localhost:3000','https://purrfect-match-front-ggvv7i4yb-shans-projects-620d094c.vercel.app']
+CORS_ALLOWED_ORIGINS = ['http://localhost:3000','https://purrfect-match-front-r1g0ehd7j-shans-projects-620d094c.vercel.app/']
 
 
 # Application definition
