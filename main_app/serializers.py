@@ -20,9 +20,20 @@ class UserSerializer(serializers.ModelSerializer):
         return user
     
 class AnimalSerializer(serializers.ModelSerializer):
+    photo_url = serializers.SerializerMethodField()
     class Meta:
         model = Animal
-        fields = '__all__'
+        fields = ['id','name', 'type', 'breed', 'age', 'size', 'gender', 'color', 'status', 'location', 'description', 'photo_url', 'contact']
+
+    def get_photo_url(self,obj):
+        # if obj.photos and len(obj.photos) > 0:
+        #     return obj.photos[0]
+        # else:
+        #     return 'https://images.pexels.com/photos/6601811/pexels-photo-6601811.jpeg?auto=compress&cs=tinysrgb&w=800'
+        if obj.photos and len(obj.photos) > 0:
+            return {"photo": obj.photos}
+        else:
+            return {"photo": [{"medium": "https://images.pexels.com/photos/6601811/pexels-photo-6601811.jpeg?auto=compress&cs=tinysrgb&w=300"}]}
 
     
 class FavoriteSerializer(serializers.ModelSerializer):
@@ -33,7 +44,7 @@ class FavoriteSerializer(serializers.ModelSerializer):
 
 class ProfileSerializer(serializers.ModelSerializer):
     user = serializers.PrimaryKeyRelatedField(read_only=True)
-    favorites = FavoriteSerializer()
+    favorites = FavoriteSerializer(read_only=True)
     class Meta:
         model = Profile
         fields = '__all__'

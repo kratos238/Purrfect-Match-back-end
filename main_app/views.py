@@ -1,6 +1,6 @@
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from rest_framework import generics, status, permissions
+from rest_framework import generics, status, permissions, filters
 from rest_framework_simplejwt.tokens import RefreshToken
 from django.contrib.auth import authenticate
 from django.contrib.auth.models import User
@@ -9,6 +9,7 @@ from .serializers import AnimalSerializer, FavoriteSerializer, ProfileSerializer
 from rest_framework.exceptions import PermissionDenied
 from django.shortcuts import get_object_or_404
 from django_filters.rest_framework import DjangoFilterBackend
+from .filters import AnimalFilter
 
 # add to favorites
 class AddToFavoriteView(APIView):
@@ -18,7 +19,9 @@ class AddToFavoriteView(APIView):
         profile = Profile.objects.get(user=user)
         animal = get_object_or_404(Animal, pk=pk)
         if not profile.favorites:
-            profile.favorites = Favorite.objects.create(profile=profile)
+            # profile.favorites = Favorite.objects.create(profile=profile)
+            favorite = Favorite.objects.create()
+            profile.favorites = favorite
             print(profile.favorites)
             profile.save()
         profile.favorites.animals.add(animal)
@@ -124,8 +127,9 @@ class AnimalList(generics.ListCreateAPIView):
     permission_classes = [permissions.IsAuthenticated]
     queryset = Animal.objects.all()
     serializer_class = AnimalSerializer
-    filter_backends = [DjangoFilterBackend]
-    filterset_fields = ['type', 'age']
+    filter_backends = [DjangoFilterBackend, filters.SearchFilter,]
+    filterset_class = AnimalFilter
+    search_fields = ['name', 'id',]
 
 class AnimalDetail(generics.RetrieveUpdateDestroyAPIView):
     permission_classes = [permissions.IsAuthenticated]
@@ -147,6 +151,7 @@ class FavoriteList(generics.ListCreateAPIView):
             profile = get_object_or_404(Profile, user=user)
             return Favorite.objects.filter(profile=profile)
 
+#no longer use this view. Instead, favoriteList does the job.
 class FavoriteDetail(generics.RetrieveUpdateDestroyAPIView):
     queryset = Favorite.objects.all()
     serializer_class = FavoriteSerializer
